@@ -31,17 +31,12 @@ def glove2word2vec(glove_vector_file, output_model_file):
     """Convert GloVe vectors into word2vec C format"""
     
     def get_info(glove_file_name):
-        """ 
-        Function to calculate the number of lines and dimensions of the GloVe vectors to make it Gensim compatible
-        """
-        num_lines = sum(1 for line in smart_open.smart_open(glove_vector_file))
-        if 'twitter' in glove_file_name:
-            dims= re.findall('\d+',glove_vector_file.split('.')[3])
-            dims=''.join(dims)
-        else:
-            dims=re.findall('\d+',glove_vector_file.split('.')[2])
-            dims=''.join(dims)
-        return num_lines, dims
+        """Return the number of vectors and dimensions in a file in GloVe format."""
+        with smart_open(glove_file_name) as f:
+            num_lines = sum(1 for line in f)
+        with smart_open(glove_file_name) as f:
+            num_dims = len(f.readline().split()) - 1
+        return num_lines, num_dims
     
     def prepend_line(infile, outfile, line):
         """ 
